@@ -1,0 +1,2 @@
+# MoreMoney
+This is a very simple application which can be used to manage your expanses. All data is stored within the local browser storage of your phone, so you don't have to be afraid of sharing this kind of personal data with others.

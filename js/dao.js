@@ -24,8 +24,7 @@ var moneydao = function(){
 				    }
 				    if (!db.objectStoreNames.contains(SETTINGS_STORE_NAME)) {
 						db.createObjectStore(SETTINGS_STORE_NAME, { keyPath: 'name' });
-				    }
-				    resolve();									      					
+				    }									      					
 				};
 				request.onerror = function(event) {
 					console.log('Konnte Datenbank nicht erstellen');

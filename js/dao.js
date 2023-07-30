@@ -101,6 +101,24 @@ var moneydao = function(){
                 }
 			});
 		},
+		getCategory: function(categoryName) {
+			return new Promise(function(resolve, reject) {
+				if (!db) {
+					reject(new Error('Bitte zuerst die Datenbank mittels initDb initialisieren'));
+					return;
+				}
+				var transaction = db.transaction([  CATEGORY_STORE_NAME ], "readonly");
+				transaction.onerror = function(event) {
+				  reject('Fehler beim Laden der Kategorien. ' + event);
+				};
+				var objectStore = transaction.objectStore(CATEGORY_STORE_NAME);
+				var request = objectStore.get(categoryName);
+                request.onsuccess = function(event) {
+                	var category = event.target.result;
+                    resolve(category);
+                }
+			});
+		},
 		saveExpanse: function(toSave) {
 			return new Promise(function(resolve, reject) {
 				if (!db) {
@@ -151,6 +169,44 @@ var moneydao = function(){
 				};
 				var objectStore = transaction.objectStore(EXPANSES_STORE_NAME);
 				objectStore.delete(toDelete.id);
+			});
+		},
+		/**
+		 * Sums up the total expanses for a given category within the also given date range
+		 * @param {*} category The category to search for
+		 * @param {*} startDate The start date (inclusive)
+		 * @param {*} endDate The end date (exclusive)
+		 * @returns The summed up expanses
+		 */
+		getTotalExpanseValue(category, startDate, endDate) {
+			return new Promise(function(resolve, reject) {
+				if (!db) {
+					reject(new Error('Bitte zuerst die Datenbank mittels initDb initialisieren'));
+					return;
+				}
+				var transaction = db.transaction([  EXPANSES_STORE_NAME ], "readonly");
+				transaction.oncomplete = function(event) {
+				  resolve();
+				};
+
+				transaction.onerror = function(event) {
+				  reject('Fehler beim Lesen der Ausgaben. ' + event);
+				};
+				var objectStore = transaction.objectStore(EXPANSES_STORE_NAME);
+				var request = objectStore.getAll();
+                request.onsuccess = function(event) {
+                	var expanses = event.target.result.map(function(dbObject) {
+            			return new Expanse(dbObject.id, dbObject.text, dbObject.category, dbObject.amount, dbObject.date);
+                	});
+					var sum = 0.0;
+					expanses.forEach((expanse) => {
+						if (expanse.category == category.name && 
+							expanse.date >= startDate && expanse.date < endDate) {
+							sum += expanse.amount;
+						}						
+					});					
+                    resolve(sum);
+                }		
 			});
 		},
 		saveSetting: function(name, value) {

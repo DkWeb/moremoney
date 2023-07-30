@@ -22,7 +22,16 @@ var i18n = {
             currentCurrency: "Aktuelle Währung",
             categories: "Kategorien",
             change: "Ändern",            
-            create: "Anlegen"
+            create: "Anlegen",
+            categoryLimit: "Limit",        
+            categoryName: "Name"            
+        },
+        createCategoryDialog: {
+            title: "Neue Kategorie",
+            categoryName: "Name",
+            categoryLimit: "Limit",
+            save: "Speichern",
+            close: "Schließen"
         },
         expanseDialog: {
             expanse: "Ausgabe",
@@ -58,6 +67,10 @@ var i18n = {
         },
         formats: {
             date: "DD.MM.YYYY"
+        },
+        catLimitAlert: {
+            title: "Limit für Kategorie überschritten",
+            body: "Für {} ist ein Monatslimit von {} festgelegt. Aktueller Betrag: {}"
         }        
     },
     en: {
@@ -83,7 +96,16 @@ var i18n = {
             currentCurrency: "Current currency",
             categories: "Categories",
             change: "Change",
-            create: "Create"
+            create: "Create",
+            categoryLimit: "Limit",
+            categoryName: "Name"            
+        },
+        createCategoryDialog: {
+            title: "Create category",
+            categoryName: "Name",
+            categoryLimit: "Limit",
+            save: "Save",
+            close: "Abort"
         },
         expanseDialog: {
             expanse: "Expanse",
@@ -120,6 +142,10 @@ var i18n = {
         formats: {
             date: "MM/DD/YYYY"
         },
+        catLimitAlert: {
+            title: "Limit reached for category",
+            body: "You've set a monthly limit for {} of {}. Spent up to  now: {}"
+        }        
     },    
     text: function(key, lang, params) {
         if (lang === undefined || lang === null) {
@@ -131,9 +157,7 @@ var i18n = {
         }
 
         var newText = getTranslationByKey(key, lang);
-        for (var i = 0; i < params.length; i++) {
-            newText = newText.replace("{}", params[i]);
-        }
+        newText = postponedParamsReplacer.replaceAll(newText, params);
         return newText;
 
         function getTranslationByKey(key, lang) {
@@ -166,5 +190,14 @@ var i18nFormatter = {
     },
     formatAmount: function(number, currency, lang) {
         return number.toLocaleString(lang) + ' ' + currency;
+    }
+}
+
+var postponedParamsReplacer = {
+    replaceAll: function(text, params) {
+        for (var i = 0; i < params.length; i++) {
+            text = text.replace("{}", params[i]);
+        }
+        return text;
     }
 }

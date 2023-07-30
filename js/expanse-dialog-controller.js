@@ -12,15 +12,51 @@ var expanseDialogController = {
             }    
             moneydao.saveExpanse(toSave).then(function(newId) {
                 toSave.id = newId;
-                return moneydao.getSetting('currency');
-            }).then(function(currencySetting) {
+                return moneydao.getCategory(toSave.category);
+            }).then(function(category)  {
+                var date = new Date();
+                var start = new Date(date.getFullYear(), date.getMonth(), 1);
+                var end = new Date(date.getFullYear(), date.getMonth() + 1, 1);
+                return moneydao.getTotalExpanseValue(category, start, end).then(function(sum) {       
+                    return new Promise(function(resolve) {
+                        resolve({ cat: category, totalSum: sum }); 
+                    });
+                });            
+            }).then(function(categoryAndSum) {
                 if (existingExpanseId !== null) {
                     dataTable.row('.selected').remove().draw(false);
                 }
                 dataTable.row.add(toSave).draw(false);
                 expanseDialogController.clearDialog($expanseDialog);
-                expanseDialogController.hideDialog($expanseDialog, moneydao);                                
+                expanseDialogController.hideDialog($expanseDialog, moneydao);                                                                              
+                var category = categoryAndSum.cat;
+                var catLimit = category.catLimit;
+                var totalSum = categoryAndSum.totalSum;
+                if (catLimit != undefined && catLimit != null && catLimit != '' &&
+                     totalSum > catLimit) {
+                    showAlert(category, totalSum);
+                }
             });
+
+            function showAlert(category, totalSum) {
+                var $mainArea = $('.main-area');
+                // If there is already an alert, remove it
+                $mainArea.find('.warning-cat-limit-reached').alert('close');
+
+                var $alertTemplate =  $('.template.warning-cat-limit-reached');
+                var alertTemplateText = $alertTemplate.find('.cat-limit-alert-body').text();
+                var alertText = postponedParamsReplacer.replaceAll(alertTemplateText, [ category.name, category.catLimit, totalSum ]);
+
+                $mainArea.prepend($alertTemplate.get(0).outerHTML);
+                var $alertBody = $mainArea.find('.cat-limit-alert-body');
+                $alertBody.text(alertText);
+                var $newAlert = $mainArea.find('.template.warning-cat-limit-reached');
+                $newAlert.removeClass('template'); 
+
+                $newAlert.find('div.alert').on('closed.bs.alert', function () {
+                    $newAlert.remove();
+                });
+            }
         });
         $('.abort-expanse-btn').on('click', function() {
             expanseDialogController.hideDialog($expanseDialog, moneydao);

@@ -7,3 +7,12 @@ function Expanse(id, text, category, amount, date) {
     this.amount = amount;
     this.date = date;
 }
+
+function Category(name, catLimit) {
+    this.name = name;
+    if (catLimit === undefined || catLimit == null || catLimit < 0) {
+        this.catLimit = null;
+    } else {
+        this.catLimit = catLimit;
+    }
+ }

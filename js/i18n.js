@@ -189,7 +189,7 @@ var i18nFormatter = {
         return moment(date).format(i18n.text("formats.date", lang));        
     },
     formatAmount: function(number, currency, lang) {
-        return number.toLocaleString(lang) + ' ' + currency;
+        return parseFloat(number).toFixed(2).toLocaleString(lang) + ' ' + currency;
     }
 }
 

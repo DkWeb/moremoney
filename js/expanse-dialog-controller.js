@@ -34,18 +34,24 @@ var expanseDialogController = {
                 var totalSum = categoryAndSum.totalSum;
                 if (catLimit != undefined && catLimit != null && catLimit != '' &&
                      totalSum > catLimit) {
-                    showAlert(category, totalSum);
+                        moneydao.getSetting('currency').then(function(currency) {
+                            showAlert(category, totalSum, currency);
+                        });
                 }
             });
 
-            function showAlert(category, totalSum) {
+            function showAlert(category, totalSum, currency) {
                 var $mainArea = $('.main-area');
                 // If there is already an alert, remove it
                 $mainArea.find('.warning-cat-limit-reached').alert('close');
 
                 var $alertTemplate =  $('.template.warning-cat-limit-reached');
                 var alertTemplateText = $alertTemplate.find('.cat-limit-alert-body').text();
-                var alertText = postponedParamsReplacer.replaceAll(alertTemplateText, [ category.name, category.catLimit, totalSum ]);
+
+                var language = langDetector.detect();
+                var formattedLimit = i18nFormatter.formatAmount(category.catLimit, currency, language); 
+                var formattedSum = i18nFormatter.formatAmount(totalSum, currency, language); 
+                var alertText = postponedParamsReplacer.replaceAll(alertTemplateText, [ category.name, formattedLimit, formattedSum ]);
 
                 $mainArea.prepend($alertTemplate.get(0).outerHTML);
                 var $alertBody = $mainArea.find('.cat-limit-alert-body');

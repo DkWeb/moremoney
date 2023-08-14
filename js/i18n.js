@@ -45,6 +45,7 @@ var i18n = {
         menu: {
             expanses: "Ausgaben",
             settings: "Einstellungen",
+            export: "Export",
             info: "Info"
         },
         info: {
@@ -54,6 +55,10 @@ var i18n = {
             thanks: "Mit freundlicher Unterstützung von:",
             disclaimer: "Bitte beachte die Lizenzbestimmungen dieser Projekte. Sie unterliegen nicht notwendigerweise der MIT Lizenz wie dieses Projekt"
         },
+        export: {
+            intro: "Downloade alle Ausgaben im CSV-Format. Dieser Export kann von dir dazu benutzt werden, die Daten in deiner bevorzugten Tabellenkalkulation auszuwerten",
+            start: "CSV Export"
+        },        
         expansePage: {
             newExpanse: "Neue Ausgabe",
             editExpanse: "Ausgabe bearbeiten",
@@ -119,6 +124,7 @@ var i18n = {
         menu: {
             expanses: "Expanses",
             settings: "Settings",
+            export: "Export",
             info: "Info"
         },
         info: {
@@ -127,6 +133,10 @@ var i18n = {
             contact: "Dirk Weber (<a href='mailto:mailme@dkweb.de'>Contact</a>)",
             thanks: "With kind support of:",
             disclaimer: "Please consider the licenses of the mentioned projects. They do not necessarily use MIT license like this project"
+        },
+        export: {
+            intro: "You can download the expanses in a CSV format. This export can be used to analyze the data in your favorite spreadsheet app",
+            start: "Export to CSV"
         },
         expansePage: {
             newExpanse: "Create expanse",
@@ -189,7 +199,7 @@ var i18nFormatter = {
         return moment(date).format(i18n.text("formats.date", lang));        
     },
     formatAmount: function(number, currency, lang) {
-        return parseFloat(number).toFixed(2).toLocaleString(lang) + ' ' + currency;
+        return parseFloat(number).toLocaleString(lang, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ' + currency;
     }
 }
 

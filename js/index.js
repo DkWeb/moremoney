@@ -22,6 +22,31 @@ window.onload = function() {
             if (selectedTemplateClass === 'settings') {
                 settingsController.registerHandler($mainArea, moneydao);
                 settingsController.showCategories($mainArea, moneydao);
+            } else if (selectedTemplateClass === 'export') {
+                var btnExport = $('.export-to-csv-btn');
+                btnExport.on('click', function() {
+                    var selectedCurrrency = 'undefined';
+                    moneydao.getSetting('currency').then(function(currency) {
+                        selectedCurrrency = currency;
+                        return moneydao.loadExpanses();
+                    }).then(function(expanses) {
+                        var language = langDetector.detect();
+                        var csv = "item;categeory;amount;date\n";
+                        for (var i = 0; i < expanses.length; i++) {
+                            var expanse = expanses[i];
+                            csv += expanse.text + ";" + expanse.category + ";";
+                            csv += i18nFormatter.formatAmount(expanse.amount, selectedCurrrency,language) + ";";
+                            csv += i18nFormatter.formatDate(expanse.date, language) + "\n";
+                        }
+                        const blob = new Blob([csv]);
+                        const a = document.createElement('a');
+                        a.href = URL.createObjectURL(blob, { type: 'text/csv' });
+                        a.download = 'moremoney_export.csv';    
+                        $($mainArea)[0].appendChild(a);
+                        a.click();
+                        $($mainArea)[0].removeChild(a);                        
+                    });
+                });
             } else if (selectedTemplateClass === 'expanses') {
                 var selectedCurrency = 'empty';
                 moneydao.getSetting('currency').then(function(currencySetting) {

@@ -87,7 +87,7 @@ window.onload = function() {
                                                     var $newExpanseBtn = $('#new-expanse-btn');                                                    
                                                     var $expanseModal = $('#expanseModal');
                                                     expanseDialogController.registerHandler($expanseModal, moneydao, $('#expanses-table').DataTable());
-                                                    $newExpanseBtn.on('click', function() {                                                        
+                                                    $newExpanseBtn.off('click').on('click', function() {                                                        
                                                         expanseDialogController.showDialog($expanseModal, moneydao, selectedCurrency);
                                                     });
 
@@ -95,7 +95,7 @@ window.onload = function() {
                                                     var $deleteExpanseBtn = $('#delete-expanse-btn');                                                    
                                                     $editExpanseBtn.prop('disabled', true);
                                                     $deleteExpanseBtn.prop('disabled', true);
-                                                    $('#expanses-table tbody').on('click', 'tr', function () {
+                                                    $('#expanses-table tbody').off('click', 'tr').on('click', 'tr', function () {
                                                         if ($(this).hasClass('selected')) {
                                                             $(this).removeClass('selected');
                                                             $editExpanseBtn.prop('disabled', true);
@@ -107,7 +107,7 @@ window.onload = function() {
                                                             $deleteExpanseBtn.prop('disabled', false);
                                                         }
                                                     }); 
-                                                    $deleteExpanseBtn.click( function () {
+                                                    $deleteExpanseBtn.off('click').on('click', function () {
                                                         var selectedRow = table.row('.selected');
                                                         var selectedExpanseId = Number.parseInt(selectedRow.id());
                                                         moneydao.deleteExpanse(new Expanse(selectedExpanseId)).then(function() {
@@ -115,7 +115,7 @@ window.onload = function() {
                                                             $deleteExpanseBtn.prop('disabled', true);   
                                                         });
                                                     });
-                                                    $editExpanseBtn.click( function () {
+                                                    $editExpanseBtn.off('click').on('click', function () {
                                                         var selectedRow = table.row('.selected');
                                                         var selectedExpanseId = Number.parseInt(selectedRow.id());
                                                         expanseDialogController.showDialog($expanseModal, moneydao, selectedCurrency, selectedExpanseId)

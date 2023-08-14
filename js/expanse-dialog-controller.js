@@ -1,14 +1,8 @@
 var expanseDialogController = function(){
-    var isSaving = false;
 
     return {
         registerHandler: function($expanseDialog, moneydao, dataTable) {
-            $('.save-expanse-btn').on('click', function() { 
-                if (isSaving) {
-                    console.log("Already in saving state ... skipping attempt to avoid duplicates!");
-                    return;
-                }
-                isSaving = true;
+            $('.save-expanse-btn').off('click').on('click', function() { 
                 var existingExpanseId = $expanseDialog.data('expanse-id');
                 var toSave;
                 if (existingExpanseId === undefined || existingExpanseId === null) {
@@ -20,7 +14,6 @@ var expanseDialogController = function(){
                 }    
                 moneydao.saveExpanse(toSave).then(function(newId) {
                     toSave.id = newId;
-                    isSaving = false;
                     return moneydao.getCategory(toSave.category);
                 }).then(function(category)  {
                     var date = new Date();
